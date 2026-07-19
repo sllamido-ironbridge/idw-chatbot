@@ -1,0 +1,411 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Pepper & MJ's Wedding — February 3–6, 2028 at Moon Palace Cancun, Cancún, Mexico. Group reservations, event schedule, pricing, travel, and booking details."
+    />
+    <title>Pepper &amp; MJ's Wedding — Moon Palace Cancun</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Jost:wght@300;400;500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --gold: #b0895f;
+        --gold-deep: #9a744c;
+        --gold-soft: #c9a875;
+        --ink: #3a3532;
+        --muted: #7c736c;
+        --cream: #faf7f2;
+        --sand: #efe7db;
+        --line: #e4d9c8;
+        --white: #fffdfa;
+      }
+      * { box-sizing: border-box; }
+      html { scroll-behavior: smooth; }
+      body {
+        margin: 0;
+        font-family: "Jost", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        color: var(--ink);
+        background: var(--cream);
+        line-height: 1.7;
+        font-weight: 300;
+        font-size: 17px;
+      }
+      h1, h2, h3, .display {
+        font-family: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+        font-weight: 500;
+        letter-spacing: 0.01em;
+      }
+      a { color: var(--gold-deep); }
+      .eyebrow {
+        font-family: "Jost", sans-serif;
+        text-transform: uppercase;
+        letter-spacing: 0.32em;
+        font-size: 12px;
+        font-weight: 400;
+        color: var(--gold-deep);
+      }
+      .wrap { max-width: 1000px; margin: 0 auto; padding: 0 28px; }
+      .narrow { max-width: 720px; }
+
+      header.bar {
+        position: sticky; top: 0; z-index: 50;
+        background: rgba(250, 247, 242, 0.9);
+        backdrop-filter: blur(8px);
+        border-bottom: 1px solid var(--line);
+      }
+      header.bar .wrap {
+        display: flex; align-items: center; justify-content: space-between;
+        height: 62px;
+      }
+      header.bar .brand {
+        font-family: "Cormorant Garamond", serif; font-size: 22px; color: var(--gold-deep);
+        letter-spacing: .04em;
+      }
+      header.bar nav a {
+        margin-left: 26px; text-decoration: none; color: var(--ink); font-size: 13px;
+        text-transform: uppercase; letter-spacing: .16em;
+      }
+      header.bar nav a:hover { color: var(--gold-deep); }
+      @media (max-width: 720px) { header.bar nav { display: none; } }
+
+      .hero {
+        position: relative;
+        text-align: center;
+        padding: 110px 28px 96px;
+        background:
+          radial-gradient(circle at 50% -10%, rgba(201, 168, 117, 0.18), transparent 55%),
+          linear-gradient(180deg, var(--sand) 0%, var(--cream) 100%);
+        overflow: hidden;
+      }
+      .hero .monogram {
+        font-family: "Cormorant Garamond", serif; font-style: italic;
+        font-size: 26px; color: var(--gold); margin-bottom: 10px;
+      }
+      .hero h1 {
+        font-size: clamp(56px, 12vw, 128px);
+        line-height: 0.98; margin: 6px 0 4px; color: var(--ink);
+      }
+      .hero h1 .amp { font-style: italic; color: var(--gold); font-weight: 400; }
+      .hero .date {
+        font-family: "Cormorant Garamond", serif; font-size: clamp(20px, 3.4vw, 30px);
+        color: var(--gold-deep); margin-top: 18px;
+      }
+      .hero .place { margin-top: 6px; letter-spacing: .18em; text-transform: uppercase; font-size: 13px; color: var(--muted); }
+      .rule { width: 64px; height: 1px; background: var(--gold); margin: 26px auto; border: 0; }
+      .btn {
+        display: inline-block; margin-top: 12px; padding: 15px 34px;
+        background: var(--gold); color: #fff; text-decoration: none;
+        text-transform: uppercase; letter-spacing: .18em; font-size: 12.5px;
+        border-radius: 2px; transition: background .2s;
+      }
+      .btn:hover { background: var(--gold-deep); color: #fff; }
+      .btn.ghost { background: transparent; color: var(--gold-deep); border: 1px solid var(--gold); }
+      .btn.ghost:hover { background: var(--gold); color: #fff; }
+
+      section { padding: 82px 0; }
+      section.alt { background: var(--white); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+      .sec-head { text-align: center; margin-bottom: 52px; }
+      .sec-head h2 { font-size: clamp(34px, 6vw, 52px); margin: 10px 0 0; color: var(--ink); }
+      .lead { font-size: 20px; color: var(--muted); text-align: center; }
+
+      .days { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+      @media (max-width: 760px) { .days { grid-template-columns: 1fr; } }
+      .day {
+        background: var(--white); border: 1px solid var(--line); border-radius: 6px;
+        padding: 30px 26px; text-align: center;
+      }
+      .day .dow { font-family: "Cormorant Garamond", serif; font-size: 30px; color: var(--gold-deep); }
+      .day .dnum { font-size: 13px; letter-spacing: .18em; text-transform: uppercase; color: var(--muted); margin-bottom: 18px; }
+      .day .ev { padding: 11px 0; border-top: 1px solid var(--line); }
+      .day .ev .name { font-family: "Cormorant Garamond", serif; font-size: 21px; color: var(--ink); }
+      .day .ev .time { font-size: 13px; letter-spacing: .1em; color: var(--gold-deep); text-transform: uppercase; }
+
+      .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 44px; align-items: start; }
+      @media (max-width: 800px) { .cols { grid-template-columns: 1fr; gap: 30px; } }
+      .card {
+        background: var(--white); border: 1px solid var(--line); border-radius: 6px; padding: 30px 30px;
+      }
+      .card h3 { font-size: 26px; margin: 0 0 6px; color: var(--gold-deep); }
+      .feature-list { list-style: none; margin: 14px 0 0; padding: 0; }
+      .feature-list li { padding: 9px 0 9px 26px; position: relative; border-top: 1px solid var(--line); }
+      .feature-list li:first-child { border-top: 0; }
+      .feature-list li::before { content: "✦"; position: absolute; left: 0; color: var(--gold); font-size: 12px; top: 12px; }
+
+      table.rates { width: 100%; border-collapse: collapse; margin-top: 6px; }
+      table.rates th, table.rates td { padding: 13px 8px; text-align: left; border-bottom: 1px solid var(--line); }
+      table.rates th { font-family: "Jost", sans-serif; font-weight: 400; text-transform: uppercase; letter-spacing: .12em; font-size: 12px; color: var(--muted); }
+      table.rates td:last-child, table.rates th:last-child { text-align: right; }
+      table.rates .rate { font-family: "Cormorant Garamond", serif; font-size: 22px; color: var(--gold-deep); }
+      .fine { font-size: 14px; color: var(--muted); }
+
+      .timeline { max-width: 620px; margin: 0 auto; }
+      .tl-item { display: flex; gap: 22px; padding: 18px 0; border-bottom: 1px solid var(--line); align-items: baseline; }
+      .tl-item:last-child { border-bottom: 0; }
+      .tl-date { flex: 0 0 150px; font-family: "Cormorant Garamond", serif; font-size: 22px; color: var(--gold-deep); }
+      .tl-label { color: var(--ink); }
+      .tl-label small { display: block; color: var(--muted); font-size: 14px; }
+
+      .band { background: linear-gradient(120deg, var(--gold) 0%, var(--gold-soft) 100%); color: #fff; text-align: center; }
+      .band h2 { color: #fff; }
+      .band .lead, .band p { color: rgba(255,255,255,.92); }
+      .band .rule { background: rgba(255,255,255,.6); }
+
+      .info-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+      @media (max-width: 800px) { .info-grid { grid-template-columns: 1fr; } }
+      .info { background: var(--white); border: 1px solid var(--line); border-radius: 6px; padding: 28px 26px; }
+      .info h3 { font-size: 23px; margin: 0 0 8px; color: var(--gold-deep); }
+      .info p { margin: 0; font-size: 15.5px; }
+
+      .note {
+        background: var(--sand); border-left: 3px solid var(--gold); border-radius: 0 6px 6px 0;
+        padding: 16px 20px; margin: 22px auto 0; max-width: 720px; font-size: 15.5px;
+      }
+
+      .contact { text-align: center; }
+      .contact .lines { font-size: 18px; margin: 20px 0; }
+      .contact .lines a { text-decoration: none; }
+      footer.site {
+        background: var(--ink); color: #cdc4bb; text-align: center; padding: 46px 28px; font-size: 14px;
+      }
+      footer.site .amp { color: var(--gold-soft); font-style: italic; }
+      footer.site .mono { font-family: "Cormorant Garamond", serif; font-size: 26px; color: #fff; }
+    </style>
+  </head>
+  <body>
+    <header class="bar">
+      <div class="wrap">
+        <span class="brand">P <span style="font-style:italic;color:#b0895f">&amp;</span> MJ</span>
+        <nav>
+          <a href="#schedule">Schedule</a>
+          <a href="#stay">Stay</a>
+          <a href="#booking">Booking</a>
+          <a href="#travel">Travel</a>
+          <a href="#contact">Contact</a>
+        </nav>
+      </div>
+    </header>
+
+    <div class="hero">
+      <div class="monogram">The Wedding Celebration of</div>
+      <h1>Pepper <span class="amp">&amp;</span> MJ</h1>
+      <div class="date">February 3–6, 2028</div>
+      <div class="place">Moon Palace Cancun · Cancún, Mexico</div>
+      <hr class="rule" />
+      <a class="btn" href="#booking">Reserve Your Room</a>
+    </div>
+
+    <section>
+      <div class="wrap narrow" style="text-align:center">
+        <div class="eyebrow">Welcome</div>
+        <h2 style="font-size:clamp(30px,5vw,44px);margin:12px 0 18px">We can't wait to celebrate with you</h2>
+        <p class="lead" style="font-size:20px">
+          Join us at Moon Palace Cancun from <strong>February 3–6, 2028</strong>. We have set up a
+          group reservation service with Indian Destination Wedding to make this experience as easy
+          as possible.
+        </p>
+        <p class="fine" style="margin-top:16px">
+          A three-night minimum stay is required to participate in the wedding events.
+        </p>
+      </div>
+    </section>
+
+    <section class="alt" id="schedule">
+      <div class="wrap">
+        <div class="sec-head">
+          <div class="eyebrow">Celebrations</div>
+          <h2>Event Schedule</h2>
+        </div>
+        <div class="days">
+          <div class="day">
+            <div class="dow">Thursday</div>
+            <div class="dnum">February 3rd</div>
+            <div class="ev"><div class="name">Mehndi</div><div class="time">11:00 am</div></div>
+            <div class="ev"><div class="name">Sangeet</div><div class="time">6:00 pm</div></div>
+          </div>
+          <div class="day">
+            <div class="dow">Friday</div>
+            <div class="dnum">February 4th</div>
+            <div class="ev"><div class="name">Haldi</div><div class="time">10:30 am</div></div>
+            <div class="ev"><div class="name">Baraat</div><div class="time">5:00 pm</div></div>
+            <div class="ev"><div class="name">Engagement Ceremony &amp; Dinner</div><div class="time">7:00 pm</div></div>
+          </div>
+          <div class="day">
+            <div class="dow">Saturday</div>
+            <div class="dnum">February 5th</div>
+            <div class="ev"><div class="name">Wedding Ceremony</div><div class="time">9:30 am</div></div>
+            <div class="ev"><div class="name">Lunch</div><div class="time">11:30 am</div></div>
+            <div class="ev"><div class="name">Reception</div><div class="time">6:30 pm</div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="stay">
+      <div class="wrap">
+        <div class="sec-head">
+          <div class="eyebrow">Where you'll stay</div>
+          <h2>Accommodations</h2>
+        </div>
+        <div class="cols">
+          <div class="card">
+            <h3>Superior Deluxe — Garden View</h3>
+            <p class="fine">Maximum occupancy: 4 guests, including children ages 0–17.</p>
+            <ul class="feature-list">
+              <li>1 king or 2 double beds</li>
+              <li>Double whirlpool tub</li>
+              <li>Top-shelf liquor dispenser</li>
+              <li>All-inclusive: meals, drinks &amp; activities</li>
+              <li>All taxes, fees and tips included</li>
+              <li>Private event fees waived</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>Nightly Rates</h3>
+            <p class="fine">Per person, per night (USD).</p>
+            <table class="rates">
+              <tr><th>Occupancy</th><th>Rate</th></tr>
+              <tr><td>Single</td><td class="rate">$671.00</td></tr>
+              <tr><td>Double</td><td class="rate">$335.50</td></tr>
+              <tr><td>Triple</td><td class="rate">$302.00</td></tr>
+              <tr><td>Quad</td><td class="rate">$285.25</td></tr>
+              <tr><td>Children (0–17)</td><td class="rate">Free</td></tr>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="band">
+      <div class="wrap narrow">
+        <div class="eyebrow" style="color:#fff;opacity:.85">A little extra</div>
+        <h2>$500 Resort Credit</h2>
+        <hr class="rule" />
+        <p class="lead">
+          Any room that stays 4 or more nights will receive $500 of resort credit for tours,
+          excursions, spa, or the gift shop.
+        </p>
+        <p class="fine" style="margin-top:10px">$100 spa maximum · a 16% tax applies when using credits.</p>
+      </div>
+    </section>
+
+    <section class="alt" id="booking">
+      <div class="wrap">
+        <div class="sec-head">
+          <div class="eyebrow">Reserve your room</div>
+          <h2>Booking &amp; Key Dates</h2>
+        </div>
+
+        <div class="timeline">
+          <div class="tl-item">
+            <div class="tl-date">Oct 15, 2027</div>
+            <div class="tl-label">Deposit Due<small>To secure your room in the wedding block</small></div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-date">Dec 9, 2027</div>
+            <div class="tl-label">Final Payment</div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-date">Dec 20, 2027</div>
+            <div class="tl-label">Flight Info Deadline<small>45 days prior to travel</small></div>
+          </div>
+        </div>
+
+        <div class="note">
+          <strong>All guests must book their rooms in the wedding block.</strong> Third-party bookings
+          forfeit event access. Please submit one form per room; the agency responds within 72
+          business hours.
+        </div>
+
+        <div style="text-align:center;margin-top:34px">
+          <a class="btn" href="#contact">Start Your Booking</a>
+        </div>
+      </div>
+    </section>
+
+    <section id="travel">
+      <div class="wrap">
+        <div class="sec-head">
+          <div class="eyebrow">Getting there</div>
+          <h2>Travel &amp; Fees</h2>
+        </div>
+        <div class="info-grid">
+          <div class="info">
+            <h3>Airport Transfers</h3>
+            <p>
+              Roundtrip from Cancún International Airport (CUN): <strong>$35 per person</strong>,
+              automatically included. Baggage allowance: one suitcase and one carry-on per passenger.
+              Note: your departure transfer pickup could be up to 5 hours prior to your flight.
+            </p>
+          </div>
+          <div class="info">
+            <h3>Regional Taxes</h3>
+            <p>
+              <strong>Environmental Tax:</strong> 26 MXN (~$1.40 USD) per room, per night, paid at the
+              resort. <strong>VISITAX:</strong> 271 MXN (~$16 USD) per person, paid via
+              <a href="https://visitax.gob.mx/" target="_blank" rel="noopener">visitax.gob.mx</a>
+              prior to or upon departure.
+            </p>
+          </div>
+          <div class="info">
+            <h3>Travel Insurance</h3>
+            <p>
+              Available for U.S./Canadian residents (excluding Quebec). Typical prices are
+              $99–$199 per person. Coverage varies; the cost is non-refundable once purchased.
+            </p>
+          </div>
+        </div>
+
+        <div class="note">
+          <strong>Cancellation Policy:</strong> All payments, including the deposit, are
+          non-refundable unless you purchase the travel insurance option. The resort prohibits room
+          changes within 75 days of travel and reductions after final payment.
+        </div>
+      </div>
+    </section>
+
+    <section class="alt contact" id="contact">
+      <div class="wrap narrow">
+        <div class="eyebrow">Questions?</div>
+        <h2 style="font-size:clamp(32px,5vw,48px);margin:10px 0 4px">We're here to help</h2>
+        <p class="lead">Your group reservation service is handled by Indian Destination Wedding.</p>
+        <div class="lines">
+          <div><a href="mailto:alyssa@indiandestinationwedding.com">alyssa@indiandestinationwedding.com</a></div>
+          <div><a href="tel:18884850005">888-485-0005</a></div>
+        </div>
+        <p class="fine">Monday–Friday, 10am–7pm EST · Responses within 72 business hours.</p>
+        <div style="margin-top:22px">
+          <a class="btn ghost" href="mailto:alyssa@indiandestinationwedding.com">Email the Coordinator</a>
+        </div>
+      </div>
+    </section>
+
+    <footer class="site">
+      <div class="mono">Pepper <span class="amp">&amp;</span> MJ</div>
+      <p>February 3–6, 2028 · Moon Palace Cancun · Cancún, Mexico</p>
+      <p class="fine" style="color:#8a807889;opacity:.7">
+        Group reservations by Indian Destination Wedding · alyssa@indiandestinationwedding.com · 888-485-0005
+      </p>
+    </footer>
+
+    <!-- ── Maya — wedding page assistant (same-origin; served by this project) ── -->
+    <script
+      src="/embed.js"
+      data-endpoint="/api/chat"
+      data-avatar="/maya.jpg"
+      data-title="Pepper & MJ's Wedding"
+      data-header-color="#b0895f"
+      data-header-color2="#c9a875"
+      data-header-font="'Cormorant Garamond', Georgia, serif"
+      data-greeting="Hi! I'm Maya 👋 Ask me anything about Pepper & MJ's wedding — dates, venue, pricing, travel, or booking. What would you like to know?"
+      data-suggestions="When and where is it?|What are the room rates?|How do I book?|What's included?"
+      defer
+    ></script>
+  </body>
+</html>

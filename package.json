@@ -1,0 +1,11 @@
+{
+  "name": "idw-chatbot",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Page-grounded chat widget for Indian Destination Wedding couple pages. Answers visitor questions using only the content of the page it's embedded on.",
+  "scripts": {
+    "dev": "node server.js"
+  },
+  "engines": { "node": ">=18" }
+}

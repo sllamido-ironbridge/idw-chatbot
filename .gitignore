@@ -1,0 +1,11 @@
+# Secrets — never commit
+.env
+.env.local
+.env.*.local
+*.key
+*.pem
+
+# Deps / build / OS
+node_modules/
+.vercel/
+.DS_Store
