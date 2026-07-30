@@ -91,6 +91,19 @@ Never display a placeholder date. Always show the real calculated date or the fa
 - Bold key numbers so they're easy to scan.
 - Reply in the same language the visitor writes in.`;
 
+function precomputeDates(pageText, currentDate) {
+  const monthNames = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+  const monthIndex = Object.fromEntries(monthNames.map((m, i) => [m.toLowerCase(), i]));
+  const m = pageText.match(/\b(January|February|March|April|May|June|July|August|September|October|November|December)\s+(\d{1,2})(?:[–\-]\d{1,2})?,?\s+(20\d{2})\b/i);
+  if (!m) return null;
+  const arrival = new Date(parseInt(m[3]), monthIndex[m[1].toLowerCase()], parseInt(m[2]));
+  const transfer = new Date(arrival); transfer.setDate(arrival.getDate() - 90);
+  const today = currentDate ? new Date(currentDate) : new Date();
+  const daysUntil = Math.round((arrival - today) / 86400000);
+  const fmt = d => `${monthNames[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
+  return { arrivalStr: fmt(arrival), transferStr: fmt(transfer), daysUntil };
+}
+
 async function generateAnswer({ question, pageText, pageTitle, pageUrl, history, currentDate }) {
   const provider = PROVIDERS[PROVIDER] || PROVIDERS.anthropic;
   const apiKey = provider.keyEnv ? process.env[provider.keyEnv] : null;
@@ -109,11 +122,20 @@ async function generateAnswer({ question, pageText, pageTitle, pageUrl, history,
     throw err;
   }
 
+  const dates = precomputeDates(trimmedPage, currentDate);
+  const datesFact = dates
+    ? `\nPRE-COMPUTED DATES (use these directly — do not recalculate):\n` +
+      `  Couple's arrival date: ${dates.arrivalStr}\n` +
+      `  Airport transfer email sent: ${dates.transferStr} (90 days before arrival)\n` +
+      `  Days until arrival from today: ${dates.daysUntil} days\n`
+    : "";
+
   const contextBlock =
     `PAGE TITLE: ${pageTitle || "(untitled)"}\n` +
     `PAGE URL: ${pageUrl || "(unknown)"}\n` +
-    `TODAY'S DATE: ${currentDate || new Date().toISOString().split("T")[0]}\n\n` +
-    `PAGE CONTENT (your only source of truth):\n"""\n${trimmedPage}\n"""`;
+    `TODAY'S DATE: ${currentDate || new Date().toISOString().split("T")[0]}\n` +
+    datesFact +
+    `\nPAGE CONTENT (your only source of truth):\n"""\n${trimmedPage}\n"""`;
 
   const turns = [
     { role: "user", content: contextBlock },
