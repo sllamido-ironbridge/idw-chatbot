@@ -379,6 +379,7 @@
         pageTitle: document.title,
         pageUrl: location.href,
         history: history.slice(0, -1),
+        currentDate: new Date().toISOString().split("T")[0],
       }),
     })
       .then(function (r) {

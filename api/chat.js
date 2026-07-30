@@ -54,6 +54,31 @@ When guests ask about costs, options, or what to choose, apply arithmetic and pr
 - **Flag deadlines** — room block cutoff dates, RSVP dates — so guests don't miss them.
 - When a guest shares their party (e.g. "me, my husband, and my daughter"), immediately offer a room cost breakdown for their group without waiting to be asked.
 
+## Travel insurance
+When a guest asks about travel insurance, what it covers, where to find details, or requests more information, respond:
+"You can find information about travel insurance and coverage here: https://www.indiandestinationwedding.com/travel-insurance/"
+Do not invent, summarize, or guarantee any specific coverage details unless they are explicitly stated in the PAGE CONTENT.
+
+## Airport transfer date logic
+TODAY'S DATE is provided at the top of every context block. The couple's arrival date is in the PAGE CONTENT — find it there; never invent it.
+
+When a guest asks about the airport transfer email, when it was sent, whether they can still be added, or how to submit transfer info:
+
+1. Find the arrival date from the PAGE CONTENT.
+2. Calculate: transfer email date = arrival date minus exactly 90 calendar days. Write the real date (e.g. "November 6, 2027") — never use placeholders like [MM/DD/YYYY] or [Calculated Date].
+3. Calculate: days until arrival = arrival date minus TODAY'S DATE.
+
+**If arrival is more than 30 days away:**
+"Your airport transfer email was sent on [REAL CALCULATED DATE], which was 90 days before your arrival date. Please check your inbox and spam/junk folder. If you cannot find the email, please contact [transfers@indiandestinationwedding.com](mailto:transfers@indiandestinationwedding.com) to provide your information."
+
+**If arrival is 30 days away or less:**
+"Your arrival date is now within 30 days. Please check your inbox and spam/junk folder for the airport transfer email and contact the Indian Destination Wedding team for assistance. Transfer availability cannot be guaranteed at this stage."
+
+**If no arrival date is found in the PAGE CONTENT:**
+"I'm unable to confirm the airport transfer email date because the arrival date is not available in my records. Please email [transfers@indiandestinationwedding.com](mailto:transfers@indiandestinationwedding.com) for assistance."
+
+Never display a placeholder date. Always show the real calculated date or the fallback message above.
+
 ## Conversational messages
 - When a guest greets you, introduces themselves, or shares personal details (name, relationship to the couple, who they're bringing), respond warmly and personally — acknowledge them by name, welcome their family, and invite them to ask anything.
 - You don't need a page fact to reply to a greeting. Just be genuinely warm and helpful.
@@ -66,7 +91,7 @@ When guests ask about costs, options, or what to choose, apply arithmetic and pr
 - Bold key numbers so they're easy to scan.
 - Reply in the same language the visitor writes in.`;
 
-async function generateAnswer({ question, pageText, pageTitle, pageUrl, history }) {
+async function generateAnswer({ question, pageText, pageTitle, pageUrl, history, currentDate }) {
   const provider = PROVIDERS[PROVIDER] || PROVIDERS.anthropic;
   const apiKey = provider.keyEnv ? process.env[provider.keyEnv] : null;
   if (provider.keyEnv && !apiKey) {
@@ -86,7 +111,8 @@ async function generateAnswer({ question, pageText, pageTitle, pageUrl, history 
 
   const contextBlock =
     `PAGE TITLE: ${pageTitle || "(untitled)"}\n` +
-    `PAGE URL: ${pageUrl || "(unknown)"}\n\n` +
+    `PAGE URL: ${pageUrl || "(unknown)"}\n` +
+    `TODAY'S DATE: ${currentDate || new Date().toISOString().split("T")[0]}\n\n` +
     `PAGE CONTENT (your only source of truth):\n"""\n${trimmedPage}\n"""`;
 
   const turns = [
@@ -172,11 +198,11 @@ export default async function handler(req, res) {
 
   try {
     const body = typeof req.body === "string" ? JSON.parse(req.body || "{}") : req.body || {};
-    const { question, pageText, pageTitle, pageUrl, history } = body;
+    const { question, pageText, pageTitle, pageUrl, history, currentDate } = body;
     if (!question || typeof question !== "string" || !question.trim()) {
       return res.status(400).json({ error: "Missing 'question'." });
     }
-    const answer = await generateAnswer({ question, pageText, pageTitle, pageUrl, history });
+    const answer = await generateAnswer({ question, pageText, pageTitle, pageUrl, history, currentDate });
     return res.status(200).json({ answer });
   } catch (e) {
     const status = e.statusCode || 500;
