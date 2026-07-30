@@ -156,16 +156,26 @@ async function callAnthropic(provider, apiKey, turns) {
 
 async function callOpenAICompatible(provider, apiKey, turns) {
   const messages = [{ role: "system", content: SYSTEM_PROMPT }, ...turns];
-  const resp = await fetch(provider.url, {
-    method: "POST",
-    headers: { "content-type": "application/json", authorization: `Bearer ${apiKey}` },
-    // No temperature override: reasoning models like kimi-k2.6 only accept the
-    // default. Larger max_tokens so thinking tokens don't crowd out the answer.
-    body: JSON.stringify({ model: provider.model, max_tokens: 2000, messages }),
-  });
+  const abort = new AbortController();
+  const timer = setTimeout(() => abort.abort(), 55000);
+  let resp;
+  try {
+    resp = await fetch(provider.url, {
+      method: "POST",
+      headers: { "content-type": "application/json", authorization: `Bearer ${apiKey}` },
+      // Kimi K2.6 is a reasoning model — reasoning tokens consume budget before
+      // the visible answer is written, so max_tokens must be generous.
+      body: JSON.stringify({ model: provider.model, max_tokens: 8000, messages }),
+      signal: abort.signal,
+    });
+  } finally {
+    clearTimeout(timer);
+  }
   const data = await parseOrThrow(resp);
-  return (data.choices?.[0]?.message?.content || "").trim() ||
-    "Sorry, I couldn't come up with an answer to that.";
+  // reasoning_content is the internal scratchpad; content is the user-facing answer.
+  // Fall back to reasoning_content only when content is empty (shouldn't happen with 8k budget).
+  const content = (data.choices?.[0]?.message?.content || "").trim();
+  return content || "Sorry, I couldn't come up with an answer to that.";
 }
 
 async function parseOrThrow(resp) {
