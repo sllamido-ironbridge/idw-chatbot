@@ -237,6 +237,9 @@ export default async function handler(req, res) {
     const answer = await generateAnswer({ question, pageText, pageTitle, pageUrl, history, currentDate });
     return res.status(200).json({ answer });
   } catch (e) {
+    if (e.name === "AbortError") {
+      return res.status(504).json({ error: "That took a bit too long — please try again." });
+    }
     const status = e.statusCode || 500;
     return res.status(status).json({ error: e.userMessage || "Unexpected server error." });
   }
