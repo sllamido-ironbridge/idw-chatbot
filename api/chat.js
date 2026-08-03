@@ -32,7 +32,7 @@ const PROVIDERS = {
     url:
       (process.env.MOONSHOT_BASE_URL || "https://api.moonshot.ai/v1").replace(/\/+$/, "") +
       "/chat/completions",
-    model: process.env.MOONSHOT_MODEL || "kimi-k2.6",
+    model: process.env.MOONSHOT_MODEL || "moonshot-v1-8k",
   },
 };
 
@@ -187,7 +187,7 @@ async function callOpenAICompatible(provider, apiKey, turns) {
       headers: { "content-type": "application/json", authorization: `Bearer ${apiKey}` },
       // Kimi K2.6 is a reasoning model — reasoning tokens consume budget before
       // the visible answer is written, so max_tokens must be generous.
-      body: JSON.stringify({ model: provider.model, max_tokens: 8000, messages }),
+      body: JSON.stringify({ model: provider.model, max_tokens: 1500, messages }),
       signal: abort.signal,
     });
   } finally {
