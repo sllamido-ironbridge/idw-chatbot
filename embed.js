@@ -259,7 +259,7 @@
       '<button id="pb-send" aria-label="Send">' +
       '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/></svg>' +
       "</button></div>" +
-      '<div id="pb-footer">Answers are based only on this page.</div>' +
+      '<div id="pb-footer">Answers are based only on this page. &nbsp;·&nbsp; <button id="pb-transcript" style="background:none;border:none;color:inherit;font:inherit;font-size:10.5px;cursor:pointer;padding:0;text-decoration:underline;opacity:.8;">✉ Send transcript</button></div>' +
       "</div>" +
       '<button id="pb-toggle" aria-label="Open chat">' +
       '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 2H4a2 2 0 0 0-2 2v18l4-4h14a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2z"/></svg>' +
@@ -406,11 +406,36 @@
       });
   }
 
+  function sendTranscript() {
+    if (!history.length) return;
+    var btn = document.querySelector("#pb-transcript");
+    if (btn) { btn.disabled = true; btn.textContent = "Sending…"; }
+    var endpoint = cfg.endpoint.replace(/\/api\/chat$/, "") + "/api/save-session";
+    fetch(endpoint, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        history: history,
+        pageTitle: document.title,
+        pageUrl: location.href,
+        currentDate: new Date().toISOString().split("T")[0],
+      }),
+    })
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        if (btn) { btn.textContent = d.ok ? "✓ Sent!" : "Error — try again"; btn.disabled = false; }
+      })
+      .catch(function () {
+        if (btn) { btn.textContent = "Error — try again"; btn.disabled = false; }
+      });
+  }
+
   function init() {
     if (!cfg.title) cfg.title = deriveTitle(); // one snippet, per-couple name
     pageText = extractPageText();
     injectStyles();
     build();
+    document.querySelector("#pb-transcript").addEventListener("click", sendTranscript);
   }
 
   if (document.readyState === "loading") {
