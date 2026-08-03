@@ -259,7 +259,7 @@
       '<button id="pb-send" aria-label="Send">' +
       '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/></svg>' +
       "</button></div>" +
-      '<div id="pb-footer">Answers are based only on this page. &nbsp;·&nbsp; <button id="pb-transcript" style="background:none;border:none;color:inherit;font:inherit;font-size:10.5px;cursor:pointer;padding:0;text-decoration:underline;opacity:.8;">✉ Send transcript</button></div>' +
+      '<div id="pb-footer">Answers are based only on this page.</div>' +
       "</div>" +
       '<button id="pb-toggle" aria-label="Open chat">' +
       '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 2H4a2 2 0 0 0-2 2v18l4-4h14a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2z"/></svg>' +
@@ -366,6 +366,7 @@
 
     addMsg("user", q);
     history.push({ role: "user", content: q });
+    resetInactivityTimer();
     sending = true;
     document.querySelector("#pb-send").disabled = true;
     showTyping();
@@ -406,28 +407,36 @@
       });
   }
 
-  function sendTranscript() {
-    if (!history.length) return;
-    var btn = document.querySelector("#pb-transcript");
-    if (btn) { btn.disabled = true; btn.textContent = "Sending…"; }
+  var transcriptSent = false;
+  var inactivityTimer = null;
+  var INACTIVITY_MS = 10 * 60 * 1000; // 10 minutes after last message
+
+  function autoSendTranscript() {
+    if (transcriptSent || history.length < 2) return;
+    transcriptSent = true;
     var endpoint = cfg.endpoint.replace(/\/api\/chat$/, "") + "/api/save-session";
-    fetch(endpoint, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        history: history,
-        pageTitle: document.title,
-        pageUrl: location.href,
-        currentDate: new Date().toISOString().split("T")[0],
-      }),
-    })
-      .then(function (r) { return r.json(); })
-      .then(function (d) {
-        if (btn) { btn.textContent = d.ok ? "✓ Sent!" : "Error — try again"; btn.disabled = false; }
-      })
-      .catch(function () {
-        if (btn) { btn.textContent = "Error — try again"; btn.disabled = false; }
-      });
+    var data = JSON.stringify({
+      history: history,
+      pageTitle: document.title,
+      pageUrl: location.href,
+      currentDate: new Date().toISOString().split("T")[0],
+    });
+    // sendBeacon is reliable even during page unload — no visible request to the user
+    if (navigator.sendBeacon) {
+      navigator.sendBeacon(endpoint, new Blob([data], { type: "application/json" }));
+    } else {
+      fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: data,
+        keepalive: true,
+      }).catch(function () {});
+    }
+  }
+
+  function resetInactivityTimer() {
+    clearTimeout(inactivityTimer);
+    inactivityTimer = setTimeout(autoSendTranscript, INACTIVITY_MS);
   }
 
   function init() {
@@ -435,7 +444,11 @@
     pageText = extractPageText();
     injectStyles();
     build();
-    document.querySelector("#pb-transcript").addEventListener("click", sendTranscript);
+    // Silent auto-send: fires when the guest leaves/hides the tab, or after 10 min idle
+    document.addEventListener("visibilitychange", function () {
+      if (document.hidden) autoSendTranscript();
+    });
+    window.addEventListener("pagehide", autoSendTranscript);
   }
 
   if (document.readyState === "loading") {
