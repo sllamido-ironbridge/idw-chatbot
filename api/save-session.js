@@ -4,7 +4,8 @@
 // ─────────────────────────────────────────────────────────────
 
 const RESEND_API_KEY  = process.env.RESEND_API_KEY;
-const TRANSCRIPT_TO   = process.env.TRANSCRIPT_EMAIL || "shan.llamido@solender.ai";
+const TRANSCRIPT_TO   = (process.env.TRANSCRIPT_EMAIL || "shan.llamido@solender.ai")
+  .split(",").map(function(e) { return e.trim(); }).filter(Boolean);
 const TRANSCRIPT_FROM = process.env.TRANSCRIPT_FROM  || "Maya at IDW <onboarding@resend.dev>";
 
 // ── helpers ──────────────────────────────────────────────────
