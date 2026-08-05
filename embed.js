@@ -409,10 +409,10 @@
 
   var transcriptSent = false;
   var inactivityTimer = null;
-  var INACTIVITY_MS = 10 * 60 * 1000; // 10 minutes after last message
+  var INACTIVITY_MS = 3 * 60 * 1000; // 3 minutes after last message
 
   function autoSendTranscript() {
-    if (transcriptSent || history.length < 2) return;
+    if (transcriptSent || history.length === 0) return;
     transcriptSent = true;
     var endpoint = cfg.endpoint.replace(/\/api\/chat$/, "") + "/api/save-session";
     var data = JSON.stringify({
@@ -421,17 +421,18 @@
       pageUrl: location.href,
       currentDate: new Date().toISOString().split("T")[0],
     });
-    // sendBeacon is reliable even during page unload — no visible request to the user
-    if (navigator.sendBeacon) {
-      navigator.sendBeacon(endpoint, new Blob([data], { type: "application/json" }));
-    } else {
-      fetch(endpoint, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: data,
-        keepalive: true,
-      }).catch(function () {});
-    }
+    // keepalive:true lets the request complete even after the page unloads
+    fetch(endpoint, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: data,
+      keepalive: true,
+    }).catch(function () {
+      // silent fallback via sendBeacon
+      if (navigator.sendBeacon) {
+        navigator.sendBeacon(endpoint, new Blob([data], { type: "application/json" }));
+      }
+    });
   }
 
   function resetInactivityTimer() {
