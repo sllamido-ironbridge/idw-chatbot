@@ -214,6 +214,65 @@ async function callOpenAICompatible(provider, apiKey, turns) {
   return content || "Sorry, I couldn't come up with an answer to that.";
 }
 
+// ── Server-side travel date enforcement ─────────────────────
+// Returns true if any user message in history or the current question
+// contains a recognisable date (month name + number, or numeric date).
+const DATE_RE = /\b(?:jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|jun(?:e)?|jul(?:y)?|aug(?:ust)?|sep(?:tember)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)\s+\d{1,2}|\b\d{1,2}[\/\-]\d{1,2}/i;
+
+function guestHasProvidedDates(history, question) {
+  const userTexts = (Array.isArray(history) ? history : [])
+    .filter(m => m.role === "user")
+    .map(m => String(m.content || ""));
+  userTexts.push(String(question || ""));
+  return userTexts.some(t => DATE_RE.test(t));
+}
+
+function answerContainsPricing(answer) {
+  return /\$\s*\d/.test(answer);
+}
+
+// Extract the travel window dates from page text (e.g. "January 21-24, 2027")
+function extractTravelWindow(pageText) {
+  const months = { january:0,february:1,march:2,april:3,may:4,june:5,july:6,august:7,september:8,october:9,november:10,december:11 };
+  const m = String(pageText).match(
+    /\b(January|February|March|April|May|June|July|August|September|October|November|December)\s+(\d{1,2})[–\-](\d{1,2}),?\s+(20\d{2})\b/i
+  );
+  if (!m) return null;
+  const yr = parseInt(m[4]), mi = months[m[1].toLowerCase()];
+  return { start: new Date(yr, mi, parseInt(m[2])), end: new Date(yr, mi, parseInt(m[3])) };
+}
+
+// Parse the first date range found in user messages
+function parseGuestDates(history, question) {
+  const months = { jan:0,feb:1,mar:2,apr:3,may:4,jun:5,jul:6,aug:7,sep:8,oct:9,nov:10,dec:11 };
+  const userTexts = (Array.isArray(history) ? history : [])
+    .filter(m => m.role === "user").map(m => String(m.content || ""));
+  userTexts.push(String(question || ""));
+  for (const t of userTexts) {
+    // e.g. "January 17 to January 24" or "Jan 17 - Jan 24"
+    const m = t.match(/\b(jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|jun(?:e)?|jul(?:y)?|aug(?:ust)?|sep(?:tember)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)\s+(\d{1,2}).*?\b(jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|jun(?:e)?|jul(?:y)?|aug(?:ust)?|sep(?:tember)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)\s+(\d{1,2})/i);
+    if (m) {
+      const yr = new Date().getFullYear() + 1; // assume next year as fallback
+      const mi1 = months[m[1].toLowerCase().slice(0,3)];
+      const mi2 = months[m[3].toLowerCase().slice(0,3)];
+      if (mi1 !== undefined && mi2 !== undefined) {
+        return { checkIn: new Date(yr, mi1, parseInt(m[2])), checkOut: new Date(yr, mi2, parseInt(m[4])) };
+      }
+    }
+  }
+  return null;
+}
+
+function datesOutsideWindow(guestDates, window) {
+  if (!guestDates || !window) return false;
+  return guestDates.checkIn < window.start || guestDates.checkOut > window.end;
+}
+
+function getContactEmail(pageText) {
+  const m = String(pageText).match(/[\w.+-]+@indiandestinationwedding\.com/i);
+  return m ? m[0] : "info@indiandestinationwedding.com";
+}
+
 async function parseOrThrow(resp) {
   if (!resp.ok) {
     const body = await resp.text().catch(() => "");
@@ -248,7 +307,22 @@ export default async function handler(req, res) {
     if (!question || typeof question !== "string" || !question.trim()) {
       return res.status(400).json({ error: "Missing 'question'." });
     }
-    const answer = await generateAnswer({ question, pageText, pageTitle, pageUrl, history, currentDate });
+    let answer = await generateAnswer({ question, pageText, pageTitle, pageUrl, history, currentDate });
+
+    // Server-side enforcement: gate pricing behind travel date confirmation
+    if (answerContainsPricing(answer)) {
+      if (!guestHasProvidedDates(history, question)) {
+        answer = "To make sure I give you the right rates, could you share your planned check-in and check-out dates?";
+      } else {
+        const travelWindow = extractTravelWindow(String(pageText || ""));
+        const guestDates   = parseGuestDates(history, question);
+        if (travelWindow && guestDates && datesOutsideWindow(guestDates, travelWindow)) {
+          const email = getContactEmail(String(pageText || ""));
+          answer = `Since your requested dates fall outside the wedding travel period listed on this page, our room block rates may not apply. For accurate pricing and availability, please email [${email}](mailto:${email}) directly — they'll be happy to help!`;
+        }
+      }
+    }
+
     return res.status(200).json({ answer });
   } catch (e) {
     if (e.name === "AbortError") {
