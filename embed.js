@@ -96,6 +96,16 @@
       });
     var text = (clone.innerText || clone.textContent || "").replace(/\n{3,}/g, "\n\n").trim();
 
+    // Extract mailto: emails from links (not visible in innerText but critical for contact info)
+    var mailtoEmails = [];
+    el.querySelectorAll('a[href^="mailto:"]').forEach(function(a) {
+      var email = (a.getAttribute("href") || "").replace(/^mailto:/i, "").split("?")[0].trim();
+      if (email && email.indexOf("@") !== -1) mailtoEmails.push(email);
+    });
+    if (mailtoEmails.length) {
+      text += "\n\nCONTACT EMAIL: " + [...new Set(mailtoEmails)].join(", ");
+    }
+
     var title = document.title || "";
     var meta = document.querySelector('meta[name="description"]');
     var desc = meta ? meta.getAttribute("content") || "" : "";

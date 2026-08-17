@@ -269,8 +269,13 @@ function datesOutsideWindow(guestDates, window) {
 }
 
 function getContactEmail(pageText) {
-  const m = String(pageText).match(/[\w.+-]+@indiandestinationwedding\.com/i);
-  return m ? m[0] : "info@indiandestinationwedding.com";
+  const text = String(pageText);
+  // Prefer the explicitly labeled mailto email injected by the widget
+  const labeled = text.match(/CONTACT EMAIL:\s*([\w.+-]+@[\w.-]+\.[a-z]{2,})/i);
+  if (labeled) return labeled[1];
+  // Fall back to any @indiandestinationwedding.com address found in text
+  const fallback = text.match(/\b(?!indiandestinationwedding@)([\w.+-]+@indiandestinationwedding\.com)/i);
+  return fallback ? fallback[1] : "info@indiandestinationwedding.com";
 }
 
 async function parseOrThrow(resp) {
