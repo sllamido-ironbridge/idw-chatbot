@@ -96,21 +96,25 @@
       });
     var text = (clone.innerText || clone.textContent || "").replace(/\n{3,}/g, "\n\n").trim();
 
-    // Extract mailto: emails — prioritise text-hyperlinked emails (visible @) over button embeds
-    var textEmails = [], buttonEmails = [];
+    // Extract the coordinator contact email from mailto: links.
+    // Priority: links with ?subject= (couple-specific CTAs) > other non-generic addresses.
+    // Always exclude generic service addresses (transfers@, info@).
+    var coordinatorEmails = [];
     el.querySelectorAll('a[href^="mailto:"]').forEach(function(a) {
-      var email = (a.getAttribute("href") || "").replace(/^mailto:/i, "").split("?")[0].trim();
+      var href = a.getAttribute("href") || "";
+      var email = href.replace(/^mailto:/i, "").split("?")[0].trim().toLowerCase();
       if (!email || email.indexOf("@") === -1) return;
-      var linkText = (a.innerText || a.textContent || "").trim();
-      if (linkText.indexOf("@") !== -1) {
-        textEmails.push(email);   // visible email address in the link text
+      if (/^(transfers|info|support|noreply)@/.test(email)) return; // skip generic
+      var hasSubject = href.toLowerCase().indexOf("?subject=") !== -1;
+      if (hasSubject) {
+        coordinatorEmails.unshift(email); // subject-tagged = coordinator-specific, goes first
       } else {
-        buttonEmails.push(email); // email hidden inside a button/CTA
+        coordinatorEmails.push(email);
       }
     });
-    var allEmails = [...new Set([].concat(textEmails, buttonEmails))];
-    if (allEmails.length) {
-      text += "\n\nCONTACT EMAIL: " + allEmails.join(", ");
+    var uniqueEmails = coordinatorEmails.filter(function(e, i, arr) { return arr.indexOf(e) === i; });
+    if (uniqueEmails.length) {
+      text += "\n\nCONTACT EMAIL: " + uniqueEmails[0]; // use the best match only
     }
 
     var title = document.title || "";
