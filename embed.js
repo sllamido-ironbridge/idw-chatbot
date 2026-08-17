@@ -121,7 +121,9 @@
     var meta = document.querySelector('meta[name="description"]');
     var desc = meta ? meta.getAttribute("content") || "" : "";
     var header = [title, desc].filter(Boolean).join(" — ");
-    return (header ? header + "\n\n" : "") + text;
+    // CONTACT EMAIL goes right after the header so it is never truncated by MAX_PAGE_CHARS
+    var contactPrefix = uniqueEmails.length ? "CONTACT EMAIL: " + uniqueEmails[0] + "\n\n" : "";
+    return (header ? header + "\n\n" : "") + contactPrefix + text;
   }
 
   // ── Minimal, SAFE markdown → HTML (escape first, then limited formatting) ──
