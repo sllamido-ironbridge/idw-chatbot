@@ -96,14 +96,21 @@
       });
     var text = (clone.innerText || clone.textContent || "").replace(/\n{3,}/g, "\n\n").trim();
 
-    // Extract mailto: emails from links (not visible in innerText but critical for contact info)
-    var mailtoEmails = [];
+    // Extract mailto: emails — prioritise text-hyperlinked emails (visible @) over button embeds
+    var textEmails = [], buttonEmails = [];
     el.querySelectorAll('a[href^="mailto:"]').forEach(function(a) {
       var email = (a.getAttribute("href") || "").replace(/^mailto:/i, "").split("?")[0].trim();
-      if (email && email.indexOf("@") !== -1) mailtoEmails.push(email);
+      if (!email || email.indexOf("@") === -1) return;
+      var linkText = (a.innerText || a.textContent || "").trim();
+      if (linkText.indexOf("@") !== -1) {
+        textEmails.push(email);   // visible email address in the link text
+      } else {
+        buttonEmails.push(email); // email hidden inside a button/CTA
+      }
     });
-    if (mailtoEmails.length) {
-      text += "\n\nCONTACT EMAIL: " + [...new Set(mailtoEmails)].join(", ");
+    var allEmails = [...new Set([].concat(textEmails, buttonEmails))];
+    if (allEmails.length) {
+      text += "\n\nCONTACT EMAIL: " + allEmails.join(", ");
     }
 
     var title = document.title || "";
