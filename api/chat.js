@@ -281,9 +281,10 @@ function getContactEmail(pageText) {
 async function parseOrThrow(resp) {
   if (!resp.ok) {
     const body = await resp.text().catch(() => "");
+    console.error(`LLM API error ${resp.status}: ${body}`);
     const err = new Error(`LLM API ${resp.status}: ${body}`);
     err.statusCode = 502;
-    err.userMessage = "Sorry, I hit a problem reaching the assistant. Please try again.";
+    err.userMessage = `LLM error ${resp.status}: ${body.slice(0, 200)}`;
     throw err;
   }
   return resp.json();
